@@ -1,5 +1,4 @@
 import java.util.*;
-import Poset;
 
 public class SelfDualPoset extends Poset {
     private final Integer[] bijection;  // maps element indices to the indices of their duals
