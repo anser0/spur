@@ -16,7 +16,7 @@ def get_children(point):
         
     return children
 
-print(get_children((1, 1, 1, 1, 0)))
+# print(get_children((1, 1, 1, 1, 0)))
 
 # def get_parents(point):
 #     """
@@ -34,6 +34,10 @@ def flip(ideal, flip_peak):
     returns a new ideal with the given peak flipped
     """
     reversed = tuple(1 - i for i in flip_peak) # reversed is guaranteed to be a peak (unless n = 1)
+    
+    if flip_peak in get_children(reversed):
+            return None # ideal
+        
     new_ideal = ideal.union({reversed}).difference(get_children(reversed) | {flip_peak}) # peaks can disappear if they're covered by reverse
     
     to_add = get_children(flip_peak)
@@ -53,9 +57,10 @@ def get_neighbors(starting_ideal):
     returns a list of the neighbors
     """
 
-    return [flip(starting_ideal, peak) for peak in starting_ideal]
+    # return [flip(starting_ideal, peak) for peak in starting_ideal]
+    return [flip(starting_ideal, peak) for peak in starting_ideal if flip(starting_ideal, peak) is not None]
 
-print(get_neighbors({(1, 0, 1, 1, 0), (1, 1, 1, 0, 0), (1, 1, 0, 1, 0), (0, 1, 1, 1, 0), (0, 0, 0, 0, 1)}))
+# print(get_neighbors({(1, 0, 1, 1, 0), (1, 1, 1, 0, 0), (1, 1, 0, 1, 0), (0, 1, 1, 1, 0), (0, 0, 0, 0, 1)}))
 
 def all_ideals():
     """
@@ -70,25 +75,39 @@ def all_ideals():
     visited = [start]
     to_do = [start]
     
+    all_degrees = {} # dictionary of all degrees
+    
     while to_do:
         ideal = to_do.pop()
+        
+        degree = len(get_neighbors(ideal))
+        # print("get_neighbors is", get_neighbors(ideal))
+        # print("all_degrees before", all_degrees)
+        all_degrees[degree] = all_degrees.get(degree, 0) + 1
+        # print("all_degrees after", all_degrees)
+        
         for neighbor in get_neighbors(ideal):
             if neighbor not in visited: # does this have redundancy issues for the order of the peaks????
                 to_do.append(neighbor)
                 visited.append(neighbor)
     
+    print(all_degrees)
     # print("length", len(visited))
     return visited
 
 # for i in all_ideals():
 #     print(i)
 
-for i in range(1, 7):
-    n = i
-    print(len(all_ideals()))
+# for i in range(1, 7):
+#     n = i
+#     all_ideals()
 # print(len(all_ideals()))
 
-n = 1
-print(all_ideals())
-        
-
+n = 5
+print(1, get_neighbors({(1, 1, 1, 1, 0)}))
+print(2, get_neighbors({(1, 0, 1, 1, 0), (1, 1, 1, 0, 0), (1, 1, 0, 1, 0), (0, 1, 1, 1, 0), (0, 0, 0, 0, 1)}))
+print(3, get_neighbors({(0, 1, 0, 0, 1), (0, 1, 1, 1, 0), (1, 1, 1, 0, 0), (1, 1, 0, 1, 0)}))
+print(4, get_neighbors({(1, 1, 1, 0, 0), (1, 1, 0, 1, 0), (0, 1, 0, 0, 1), (1, 0, 0, 0, 1), (0, 0, 1, 1, 0)}))
+print(5, get_neighbors({(0, 0, 0, 1, 1), (1, 0, 1, 0, 0), (1, 1, 0, 1, 0), (0, 1, 0, 0, 1), (0, 1, 1, 0, 0), (1, 0, 0, 0, 1), (0, 0, 1, 1, 0)}))
+print(6, get_neighbors({(1, 1, 0, 0, 1), (1, 1, 1, 0, 0), (1, 1, 0, 1, 0)}))
+print(7, get_neighbors({(1, 0, 1, 0, 0), (0, 0, 1, 0, 1), (1, 1, 0, 0, 0), (0, 1, 0, 0, 1), (1, 0, 0, 0, 1), (0, 0, 1, 1, 0), (0, 0, 0, 1, 1), (0, 1, 0, 1, 0), (0, 1, 1, 0, 0), (1, 0, 0, 1, 0)}))
