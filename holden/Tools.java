@@ -1,6 +1,21 @@
 import java.util.*;
 
 abstract public class Tools {
+    private static final long startTime = System.currentTimeMillis();
+
+    // gets number of milliseconds since program started
+    public static int time() {
+        return (int) (System.currentTimeMillis() - startTime);
+    }
+
+    public static void printTime() {
+        printTime("");
+    }
+
+    public static void printTime(String message) {
+        System.out.println(message + ": " + time() + "ms");
+    }
+
     // converts set to ArrayList
     public static <T> ArrayList<T> createArray(Set<T> objects) {
         ArrayList<T> array = new ArrayList<T>();

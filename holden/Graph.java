@@ -6,6 +6,8 @@ public class Graph {
     private int vertexCount;                        // number of vertices
     private int edgeCount;                          // number of edges
     private Map<Vertex, Set<Vertex>> neighbors;     // neighbors for each vertex
+    private Map<Vertex, Integer> eccentricities;    // eccentricities for each vertex; initialized later
+    private String name = "unnamed graph";          // name
 
     // returns vertex set
     public Set<Vertex> getVertices() {
@@ -15,6 +17,11 @@ public class Graph {
     // returns vertex count
     public int getVertexCount() {
         return vertexCount;
+    }
+
+    // returns edges
+    public Set<Edge> getEdges() {
+        return edges;
     }
 
     // returns edge count
@@ -31,7 +38,7 @@ public class Graph {
     public int getMaximumDegree() {
         int maxDegree = 0;
         for (Vertex vertex: vertices) {
-            int degree = neighbors(vertex).size();
+            int degree = getNeighbors(vertex).size();
             if (degree > maxDegree) {
                 maxDegree = degree;
             }
@@ -40,33 +47,33 @@ public class Graph {
     }
 
     // returns set of neighbors of a vertex
-    public Set<Vertex> neighbors(Vertex v) {
+    public Set<Vertex> getNeighbors(Vertex v) {
         return neighbors.get(v);
+    }
+
+    public int degree(Vertex v) {
+        return getNeighbors(v).size();
     }
 
     // checks if two vertices are connected by an edge
     public boolean adjacent(Vertex u, Vertex v) {
-        return neighbors(u).contains(v);
+        return getNeighbors(u).contains(v);
+    }
+
+    // sets name
+    public void setName(String newName) {
+        this.name = newName;
+    }
+
+    // returns name
+    public String getName() {
+        return name;
     }
 
     // constructor: edges connect vertices
     public Graph(Set<Vertex> vertices, Set<Edge> edges) {
         this.vertices = vertices;
-        this.edges = new HashSet<Edge>();
-        for (Edge e: edges) {
-            boolean alreadyExists = false;
-            for (Edge f: this.edges) {
-                if (f.equals(e)) {
-                    alreadyExists = true;
-                    break;
-                }
-            }
-            if (!alreadyExists) {
-                this.edges.add(e);
-            }
-        }
         this.vertexCount = vertices.size();
-        this.edgeCount = this.edges.size();
         this.neighbors = new HashMap<Vertex, Set<Vertex>>();
         for (Vertex v: vertices) {
             neighbors.put(v, new HashSet<Vertex>());
@@ -74,23 +81,35 @@ public class Graph {
         for (Edge e: edges) {
             Vertex v1 = e.getFirstVertex();
             Vertex v2 = e.getSecondVertex();
-            neighbors.get(v1).add(v2);
-            neighbors.get(v2).add(v1);
+            getNeighbors(v1).add(v2);
+            getNeighbors(v2).add(v1);
         }
+        this.edges = new HashSet<Edge>();
+        for (Vertex u: vertices) {
+            for (Vertex v: getNeighbors(u)) {
+                if (u.getID() < v.getID()) {
+                    this.edges.add(new Edge(u, v));
+                }
+            }
+        }
+        this.edgeCount = edges.size() / 2;
+        this.eccentricities = new HashMap<Vertex, Integer>();
     }
 
-    // returns the distance to the farthest vertex in its connected component
-    private int getMaximumDistance(Vertex startingVertex) {
+    private int getEccentricity(Vertex startingVertex) {
+        if (eccentricities.containsKey(startingVertex)) {
+            return eccentricities.get(startingVertex);
+        }
         ArrayList<Set<Vertex>> layers = new ArrayList<Set<Vertex>>();
         layers.add(new HashSet<Vertex>());
         layers.get(0).add(startingVertex);
-        layers.add(neighbors(startingVertex));
+        layers.add(getNeighbors(startingVertex));
         while (layers.get(layers.size() - 1).size() > 0) {
             Set<Vertex> currentLayer = layers.get(layers.size() - 1);
             Set<Vertex> previousLayer = layers.get(layers.size() - 2);
             Set<Vertex> nextLayer = new HashSet<Vertex>();
             for (Vertex v: currentLayer) {
-                for (Vertex n: neighbors(v)) {
+                for (Vertex n: getNeighbors(v)) {
                     if (!currentLayer.contains(n) && !previousLayer.contains(n)) {
                         nextLayer.add(n);
                     }
@@ -98,36 +117,62 @@ public class Graph {
             }
             layers.add(nextLayer);
         }
-        return layers.size() - 2;
+        int eccentricity = layers.size() - 2;
+        eccentricities.put(startingVertex, eccentricity);
+        return eccentricity;
     }
 
-    // returns the diameter of the largest component in a connected graph
-    public int getRadius() {
+    // returns the center of the connected graph
+    public Set<Vertex> getCenter() {
         int radius = vertexCount;
+        Set<Vertex> center = new HashSet<Vertex>();
         for (Vertex v: vertices) {
-            int maximumDistance = getMaximumDistance(v);
+            int maximumDistance = getEccentricity(v);
             if (maximumDistance < radius) {
                 radius = maximumDistance;
+                center = new HashSet<Vertex>();
+            }
+            if (maximumDistance == radius) {
+                center.add(v);
             }
         }
-        return radius;
+        return center;
     }
 
-    // returns the diameter of the largest component in a connected graph
-    public int getDiameter() {
+    // returns the radius of the largest component in a connected graph
+    public int getRadius() {
+        Set<Vertex> center = getCenter();
+        Vertex v = center.iterator().next();
+        return getEccentricity(v);
+    }
+
+    // returns the perimeter of the connected graph
+    public Set<Vertex> getPerimeter() {
         int diameter = 0;
+        Set<Vertex> perimeter = new HashSet<Vertex>();
         for (Vertex v: vertices) {
-            int maximumDistance = getMaximumDistance(v);
+            int maximumDistance = getEccentricity(v);
             if (maximumDistance > diameter) {
                 diameter = maximumDistance;
+                perimeter = new HashSet<Vertex>();
+            }
+            if (maximumDistance == diameter) {
+                perimeter.add(v);
             }
         }
-        return diameter;
+        return perimeter;
+    }
+    // returns the diameter of the largest component in a connected graph
+    public int getDiameter() {
+        Set<Vertex> perimeter = getPerimeter();
+        Vertex v = perimeter.iterator().next();
+        return getEccentricity(v);
     }
 
     // returns string containing vertex set and edge set
     public String toString() {
-        String s = "vertices: {" + Tools.join(vertices) + "}, ";
+        String s = "name: " + getName() + ", ";
+        s += "vertices: {" + Tools.join(vertices) + "}, ";
         s += "edges: {" + Tools.join(edges) + "}";
         return s;
     }

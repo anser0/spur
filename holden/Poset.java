@@ -9,6 +9,7 @@ public class Poset {
     protected boolean[][] cover;                    // covering relation
     protected Map<Element, Set<Element>> covering;  // covering relations
     protected Map<Element, Set<Element>> covered;   // covered relations
+    protected String name = "unnamed poset";        // name
     
     // gets index of an element
     protected int getIndex(Element e) {
@@ -63,6 +64,16 @@ public class Poset {
         return covered.get(a);
     }
 
+    // sets name
+    public void setName(String newName) {
+        this.name = newName;
+    }
+
+    // returns name
+    public String getName() {
+        return name;
+    }
+
     // helper function for constructor; verifies that relations determine a poset
     private boolean verify() {
         for (int a = 0; a < cardinality; a++) {
@@ -89,7 +100,7 @@ public class Poset {
         return true;
     }
 
-    // helper function for construction; calculates covering relation
+    // helper function for constructor; calculates covering relation
     private void createCovers() {
         this.cover = new boolean[cardinality][cardinality];
         for (int a = 0; a < cardinality; a++) {
@@ -161,8 +172,9 @@ public class Poset {
 
     // prints elements and covering relation
     public String toString() {
-        String s = "elements: ";
-        s += "{" + Tools.join(elements) + "}";
+        String s = "name: " + getName() + ", ";
+        s += "elements: ";
+        s += "{" + Tools.join(elementSet) + "}";
         s += ", ";
         s += "covering relations: ";
         ArrayList<String> relationStrings = new ArrayList<String>();

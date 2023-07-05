@@ -67,38 +67,73 @@ public class SelfDualPoset extends Poset {
     // generates the flip graph on self-dual order ideals
     public Graph generateFlipGraph() {
         SelfDualOrderIdeal startingOrderIdeal = generateSelfDualOrderIdeal();
-        Set<Vertex> vertices = new HashSet<Vertex>();
-        Set<Edge> edges = new HashSet<Edge>();
-        Map<Vertex, SelfDualOrderIdeal> map = new HashMap<Vertex, SelfDualOrderIdeal>();
         Vertex startingVertex = new Vertex(startingOrderIdeal.toString());
-        vertices.add(startingVertex);
+        Map<Vertex, SelfDualOrderIdeal> map = new HashMap<Vertex, SelfDualOrderIdeal>();
+        ArrayList<Set<Vertex>> layers = new ArrayList<Set<Vertex>>();
+        Set<Edge> edges = new HashSet<Edge>();
+        layers.add(new HashSet<Vertex>());
+        layers.get(0).add(startingVertex);
         map.put(startingVertex, startingOrderIdeal);
-        ArrayList<Vertex> todo = new ArrayList<Vertex>();
-        todo.add(startingVertex);
-        while (todo.size() > 0) {
-            Vertex currentVertex = todo.get(0);
-            SelfDualOrderIdeal currentIdeal = map.get(currentVertex);
-            Set<SelfDualOrderIdeal> neighbors = currentIdeal.neighbors();
-            for (SelfDualOrderIdeal ideal: neighbors) {
-                boolean alreadyExists = false;
-                for (Vertex v: vertices) {
-                    if (map.get(v).equals(ideal)) {
-                        alreadyExists = true;
-                        edges.add(new Edge(currentVertex, v));
-                        break;
+        layers.add(new HashSet<Vertex>());
+        for (SelfDualOrderIdeal neighborIdeal: startingOrderIdeal.neighbors()) {
+            Vertex neighborVertex = new Vertex(neighborIdeal.toString());
+            layers.get(1).add(neighborVertex);
+            map.put(neighborVertex, neighborIdeal);
+            edges.add(new Edge(startingVertex, neighborVertex));
+        }
+        while (layers.get(layers.size()-1).size() > 0) {
+            Set<Vertex> previousLayer = layers.get(layers.size()-2);
+            Set<Vertex> currentLayer = layers.get(layers.size()-1);
+            Set<Vertex> nextLayer = new HashSet<Vertex>();
+            for (Vertex vertex: currentLayer) {
+                SelfDualOrderIdeal orderIdeal = map.get(vertex);
+                for (SelfDualOrderIdeal neighborIdeal: orderIdeal.neighbors()) {
+                    boolean alreadyExists = false;
+                    for (Vertex v: previousLayer) {
+                        if (map.get(v).equals(neighborIdeal)) {
+                            alreadyExists = true;
+                        }
+                        if (alreadyExists) {
+                            break;
+                        }
+                    }
+                    for (Vertex v: currentLayer) {
+                        if (map.get(v).equals(neighborIdeal)) {
+                            alreadyExists = true;
+                            edges.add(new Edge(vertex, v));
+                        }
+                        if (alreadyExists) {
+                            break;
+                        }
+                    }
+                    for (Vertex v: nextLayer) {
+                        if (map.get(v).equals(neighborIdeal)) {
+                            alreadyExists = true;
+                            edges.add(new Edge(vertex, v));
+                        }
+                        if (alreadyExists) {
+                            break;
+                        }
+                    }
+                    if (!alreadyExists) {
+                        Vertex newVertex = new Vertex(neighborIdeal.toString());
+                        nextLayer.add(newVertex);
+                        map.put(newVertex, neighborIdeal);
+                        edges.add(new Edge(vertex, newVertex));
                     }
                 }
-                if (!alreadyExists) {
-                    Vertex newVertex = new Vertex(ideal.toString());
-                    vertices.add(newVertex);
-                    map.put(newVertex, ideal);
-                    edges.add(new Edge(currentVertex, newVertex));
-                    todo.add(newVertex);
-                }
             }
-            todo.remove(0);
+            layers.add(nextLayer);
         }
-        return new Graph(vertices, edges);
+        Set<Vertex> vertices = new HashSet<Vertex>();
+        for (Set<Vertex> layer: layers) {
+            for (Vertex v: layer) {
+                vertices.add(v);
+            }
+        }
+        Graph result = new Graph(vertices, edges);
+        result.setName("flip graph on " + getName());
+        return result;
     }
 
     // prints elements, covering relation, and dual map
@@ -135,7 +170,9 @@ public class SelfDualPoset extends Poset {
         for (Element element: elementArray) {
             elements.add(element);
         }
-        return new SelfDualPoset(elements, relations, bijection);
+        SelfDualPoset result = new SelfDualPoset(elements, relations, bijection);
+        result.setName("[" + n + "]");
+        return result;
     }
 
     // helper function for product; maps elements of a Cartesian product to their duals
@@ -166,6 +203,12 @@ public class SelfDualPoset extends Poset {
         Set<Element> elements = map.keySet();
         Set<Pair<Element>> relations = Poset.createRelations(selfDualPosets, map);
         Map<Element, Element> bijection = createBijection(selfDualPosets, map);
-        return new SelfDualPoset(elements, relations, bijection);
+        SelfDualPoset result = new SelfDualPoset(elements, relations, bijection);
+        ArrayList<String> posetNames = new ArrayList<String>();
+        for (SelfDualPoset selfDualPoset: selfDualPosets) {
+            posetNames.add(selfDualPoset.getName());
+        }
+        result.setName(String.join("*", posetNames));
+        return result;
     }
 }
