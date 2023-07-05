@@ -79,6 +79,52 @@ public class Graph {
         }
     }
 
+    // returns the distance to the farthest vertex in its connected component
+    private int getMaximumDistance(Vertex startingVertex) {
+        ArrayList<Set<Vertex>> layers = new ArrayList<Set<Vertex>>();
+        layers.add(new HashSet<Vertex>());
+        layers.get(0).add(startingVertex);
+        layers.add(neighbors(startingVertex));
+        while (layers.get(layers.size() - 1).size() > 0) {
+            Set<Vertex> currentLayer = layers.get(layers.size() - 1);
+            Set<Vertex> previousLayer = layers.get(layers.size() - 2);
+            Set<Vertex> nextLayer = new HashSet<Vertex>();
+            for (Vertex v: currentLayer) {
+                for (Vertex n: neighbors(v)) {
+                    if (!currentLayer.contains(n) && !previousLayer.contains(n)) {
+                        nextLayer.add(n);
+                    }
+                }
+            }
+            layers.add(nextLayer);
+        }
+        return layers.size() - 2;
+    }
+
+    // returns the diameter of the largest component in a connected graph
+    public int getRadius() {
+        int radius = vertexCount;
+        for (Vertex v: vertices) {
+            int maximumDistance = getMaximumDistance(v);
+            if (maximumDistance < radius) {
+                radius = maximumDistance;
+            }
+        }
+        return radius;
+    }
+
+    // returns the diameter of the largest component in a connected graph
+    public int getDiameter() {
+        int diameter = 0;
+        for (Vertex v: vertices) {
+            int maximumDistance = getMaximumDistance(v);
+            if (maximumDistance > diameter) {
+                diameter = maximumDistance;
+            }
+        }
+        return diameter;
+    }
+
     // returns string containing vertex set and edge set
     public String toString() {
         String s = "vertices: {" + Tools.join(vertices) + "}, ";

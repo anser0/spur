@@ -14,5 +14,10 @@ public class Main {
         System.out.println("Edges: " + g.getEdgeCount());
         System.out.println("Average degree: " + g.getAverageDegree());
         System.out.println("Maximum degree: " + g.getMaximumDegree());
+        System.out.println("Radius: " + g.getRadius());
+        System.out.println("Diameter: " + g.getDiameter());
+
+        GraphVisualization drawing = new GraphVisualization(g);
+        drawing.draw();
     }
 }
