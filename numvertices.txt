@@ -95,3 +95,4 @@ dimensions: 4 x 5 x 8 , number of vertices: 51450
 dimensions: 4 x 5 x 9 , number of vertices: 96040
 dimensions: 4 x 6 x 6 , number of vertices: 30625
 dimensions: 4 x 6 x 7 , number of vertices: 85750
+dimensions: 4 x 6 x 8 , number of vertices: 240100
