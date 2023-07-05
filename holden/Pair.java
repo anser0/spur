@@ -23,7 +23,7 @@ public class Pair<T> {
         if (!(o instanceof Pair)) {
             return false;
         }
-        Pair other = (pair) o;
+        Pair other = (Pair) o;
         return first.equals(other.getFirst()) && second.equals(other.getSecond());
     }
 

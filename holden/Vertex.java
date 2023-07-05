@@ -25,7 +25,7 @@ public class Vertex {
     }
 
     // determines if this vertex is incident to e
-    public boolean incident(edge e) {
+    public boolean incident(Edge e) {
         return e.incident(this);
     }
 
