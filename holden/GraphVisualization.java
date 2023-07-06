@@ -113,7 +113,7 @@ public class GraphVisualization extends JFrame {
 
     // adjusts locations of vertices based on forces
     private void adjust() {
-        int iterations = 1000; // controls how many iterations adjust() acts for
+        int iterations = (int) (1000 * Math.min(1, 256.0 / graph.getVertexCount())); // controls how many iterations adjust() acts for
         for (int counter = 0; counter < iterations; counter++) {
             Map<Vertex, CoordinatePair> forces = new HashMap<Vertex, CoordinatePair>();
             for (Vertex v: graph.getVertices()) {
