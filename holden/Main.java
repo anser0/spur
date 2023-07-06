@@ -2,30 +2,30 @@ import java.util.*;
 
 public class Main {
     public static void main(String[] args) {
-        int maxVolume = 64;
-        for (int a = 2; a <= maxVolume/2; a++) {
-            for (int b = a; b <= maxVolume/2; b++) {
-                if (a*b % 2 == 1 || a*b > maxVolume) {
-                    continue;
-                }
-                createImage(new int[] {a, b});
-            }
-        }
-        for (int a = 2; a <= maxVolume/4; a++) {
-            for (int b = a; b <= maxVolume/4; b++) {
-                for (int c = b; c <= maxVolume/4; c++) {
-                    if (a*b*c % 2 == 1 || a*b*c > maxVolume) {
-                        continue;
-                    }
-                    createImage(new int[] {a, b, c});
-                }
-            }
-        }
-        for (int a = 2; a <= maxVolume/8; a++) {
-            for (int b = a; b <= maxVolume/8; b++) {
-                for (int c = b; c <= maxVolume/8; c++) {
-                    for (int d = c; d <= maxVolume/8; d++) {
-                        if (a*b*c*d % 2 == 1 || a*b*c*d > maxVolume) {
+        // int maxVolume = 64;
+        // for (int a = 2; a <= maxVolume/2; a++) {
+        //     for (int b = a; b <= maxVolume/2; b++) {
+        //         if (a*b % 2 == 1 || a*b > maxVolume) {
+        //             continue;
+        //         }
+        //         createImage(new int[] {a, b});
+        //     }
+        // }
+        // for (int a = 2; a <= maxVolume/4; a++) {
+        //     for (int b = a; b <= maxVolume/4; b++) {
+        //         for (int c = b; c <= maxVolume/4; c++) {
+        //             if (a*b*c % 2 == 1 || a*b*c > maxVolume) {
+        //                 continue;
+        //             }
+        //             createImage(new int[] {a, b, c});
+        //         }
+        //     }
+        // }
+        for (int a = 2; a <= 8; a++) {
+            for (int b = a; b <= 8; b++) {
+                for (int c = b; c <= 8; c++) {
+                    for (int d = c; d <= 8; d++) {
+                        if (a*b*c*d % 2 == 1 || a*b*c*d > 64) {
                             continue;
                         }
                         createImage(new int[] {a, b, c, d});
