@@ -92,7 +92,7 @@ public class Graph {
                 }
             }
         }
-        this.edgeCount = edges.size() / 2;
+        this.edgeCount = edges.size();
         this.eccentricities = new HashMap<Vertex, Integer>();
     }
 

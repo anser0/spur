@@ -8,12 +8,18 @@ abstract public class Tools {
         return (int) (System.currentTimeMillis() - startTime);
     }
 
+    // prints time
     public static void printTime() {
         printTime("");
     }
 
+    // prints time
     public static void printTime(String message) {
         System.out.println(message + ": " + time() + "ms");
+    }
+
+    public static String getDirectory() {
+        return System.getProperty("user.dir");
     }
 
     // converts set to ArrayList
