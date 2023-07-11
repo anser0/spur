@@ -96,7 +96,7 @@ public class Graph {
         this.eccentricities = new HashMap<Vertex, Integer>();
     }
 
-    private int getEccentricity(Vertex startingVertex) {
+    public int getEccentricity(Vertex startingVertex) {
         if (eccentricities.containsKey(startingVertex)) {
             return eccentricities.get(startingVertex);
         }
