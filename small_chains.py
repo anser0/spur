@@ -50,9 +50,6 @@ def all_ideals(l, w, h):
 
         return [flip(starting_ideal, peak) for peak in starting_ideal if flip(starting_ideal, peak) is not None]
     
-    # print(flip({(1, 1, 0)}, (1, 1, 0)))
-    # print(get_neighbors({(1, 1, 0)}))
-    
     if h % 2 == 0:
         start = {(l-1, w-1, h//2 - 1)} # probably want h > 1
     elif w % 2 == 0:
@@ -93,13 +90,11 @@ def all_ideals(l, w, h):
     # sum_of_degrees = sum(k*all_degrees[k] for k in all_degrees)
     # print("sum of degrees", sum_of_degrees, "avg degree", 1.0 * sum_of_degrees / len(visited))
     return visited
-    
+         
+            
 
-print(len(all_ideals(4, 5, 6)))
 
-# for i in all_ideals(1, 2, 7):
-#     print(i)
-# print(len(all_ideals(1, 2, 7)))
+# print(len(all_ideals(6, 5, 6)))
 
 # for a in range(1, 10):
 #     for b in range(a, 10):
