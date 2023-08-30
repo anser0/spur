@@ -1,6 +1,11 @@
-import copy
+"""
+This program does the flip operation on TSSC ideals to generate all TSSC ideals 
+of [2r]x[2r]x[2r] for r <= 6.
+Ideals are viewed as 2D arrays with array entries representing heights in 3D.
+Additional code commented out at the end can be run to find the eccentricities.
+"""
 
-# views ideals as a 2D array
+import copy
 
 # start = [[12, 12, 12, 12, 12, 12, 6, 6, 6, 6, 6, 6],
 #          [12, 12, 12, 12, 12, 12, 6, 6, 6, 6, 6, 6],
@@ -146,37 +151,6 @@ def all_ideals():
                 
     return visited
 
-# for ideal in all_ideals():
-#     print(ideal)
-    
-# print("peaks of", get_potential_peaks([[8, 8, 8, 8, 7, 5, 5, 4], [8, 8, 8, 7, 6, 5, 4, 3], [8, 8, 8, 6, 5, 4, 3, 3], [8, 7, 6, 5, 4, 3, 2, 1], [7, 6, 5, 4, 3, 2, 1, 0], [5, 5, 4, 3, 2, 0, 0, 0], [5, 4, 3, 2, 1, 0, 0, 0], [4, 3, 3, 1, 0, 0, 0, 0]]))
-    
-big_list = all_ideals()
-
-eccentricities = []
-
-# n=8
-
-# farthest_from_center = []
-
-# for i in range():
-#     max_sum = 0
-#     for j in range(1764):
-#         the_sum = 0
-#         if i != j:
-#             for a in range(n):
-#                 for b in range(n):
-#                     the_sum += abs(big_list[i][a][b] - big_list[j][a][b])
-#             # if the_sum > max_sum:
-#             #     max_sum = the_sum
-#             if the_sum == 60:
-#                 # print(big_list[j][4][4:], big_list[j][5][4:], big_list[j][6][4:], big_list[j][7][4:])
-#                 print(sum(big_list[j][4][4:] + big_list[j][5][4:] + big_list[j][6][4:] + big_list[j][7][4:]))
-#     eccentricities.append((i, max_sum / 6))
-
-# print(farthest_from_center)
-# specific to n=6
-
 def num_ideals():
     # there is a formula but since there are so few cases I will just write out the numbers
     if n == 4:
@@ -189,26 +163,55 @@ def num_ideals():
         return 429 
     elif n == 12:
         return 7436
+    elif n == 14:
+        return 218348
     raise KeyError
 
+big_list = all_ideals()
+
+eccentricities = []
 perimeter = []
 
-for i in range(num_ideals()):
-    max_sum = 0
-    for j in range(num_ideals()):
-        sum = 0
-        if i != j:
-            for a in range(n):
-                for b in range(n):
-                    sum += abs(big_list[i][a][b] - big_list[j][a][b])
-            if sum > max_sum:
-                max_sum = sum
-            # if sum == 48:
-            #     print(big_list[j])
-    if max_sum <= 7*6:
-        print(big_list[i], max_sum)
-    else:
-        print("no")
+# n = 14 testing
+
+def number_in_O_110(ideal):
+    """
+    returns the number of points in O_{110} contained in the ideal
+    """
+    num_points = 0
+    for row in range(n//2, n):
+        for col in range(n//2, n):
+            num_points += ideal[row][col]
+    return num_points
+
+counter = 0
+potential_centers = []
+while counter < 10:
+    for ideal in big_list: # maybe should do things w yield instead
+        octant_count = number_in_O_110(ideal)
+        if octant_count == 45 or octant_count == 46:
+            potential_centers.append(ideal)
+            print(ideal)
+            counter += 1
+
+# print(potential_centers)
+
+# for i in range(num_ideals()):
+#     max_sum = 0
+#     for j in range(num_ideals()):
+#         sum = 0
+#         if i != j:
+#             for a in range(n):
+#                 for b in range(n):
+#                     sum += abs(big_list[i][a][b] - big_list[j][a][b])
+#             if sum > max_sum:
+#                 max_sum = sum
+#             # if sum == 48:
+#             #     print(big_list[j])
+#     if max_sum <= 7*6:
+#         print(big_list[i], max_sum)
+#     else:
+#         print("no")
     # eccentricities.append((i, max_sum / 6))
     
 # n=10    
@@ -222,6 +225,3 @@ for i in range(num_ideals()):
 #         octant_15.append(ideal)
         
 # print(octant_15)
-
-# diameter is the max distance out of these (/ 6 technically)
-# want to find max distance for any given vertex, or maybe average distance??

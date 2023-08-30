@@ -1,3 +1,8 @@
+"""
+This program includes a function that verifies whether a point in [n]x[n]x[n] must be included
+in all TSSC ideals (check_inequalities) and a function that returns all such points in a 2D array (must_include)
+"""
+
 def check_inequalities(i, j, k, n):
     """
     return True if the inequalities are satisfied (which makes the flip not work)
